@@ -16,7 +16,7 @@
   <div class="container">
     <fieldset>
       <legend>User Form</legend>
-      <user :id="1" @save="saveHandler"/>
+      <user :id="null" @save="saveHandler"/>
     </fieldset>
   </div>
 </template>
@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     saveHandler(data) {
-      console.log(data);
+      console.log('In App.vue::saveHandler, data received from User.vue Component after a save Event :', data);
     },
   },
 };

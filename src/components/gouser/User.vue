@@ -8,7 +8,7 @@ button{
 <template>
   <div class="hello">
     <h4>User id : {{ id }}</h4>
-    <form>
+    <form @change="checkDataValidation">
       <div class="row">
       <div class="six columns">
         <label for="nameInput">name</label>
@@ -41,6 +41,7 @@ button{
     <div class="twelve columns">
       <template v-if="isValid">
         DATA IS VALID !
+        <img src="">
       </template>
       <template v-else>
         DATA IS INVALID ! {{errMessage}}
@@ -51,10 +52,14 @@ button{
 
 <script>
 import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
+
+const userSchema = require('./gouser.schema.json');
 
 const ajv = new Ajv();
-const userSchema = require('./gouser.schema.json');
-// const userValidation = ajv.compile(userSchema);
+// let's import only the format that we use
+// https://github.com/ajv-validator/ajv-formats
+addFormats(ajv, ['date', 'email']);
 let userValidation = null;
 
 export default {
@@ -67,16 +72,19 @@ export default {
       isValid: false,
       errMessage: '',
       user: {
-        id: 0, name: '', email: '', username: '', is_admin: false,
+        id: null, name: '', email: '', username: '', is_admin: false,
       },
     };
   },
   mounted() {
     this.user.id = this.id; // get initial id property
     console.log('userSchema', userSchema);
+    console.log('userSchema.properties', userSchema.properties);
     if (ajv.validateSchema(userSchema)) {
       console.log('Schema is valid !');
       userValidation = ajv.compile(userSchema);
+      console.log('userValidation : ', userValidation);
+      this.checkDataValidation();
     } else {
       console.warn('Schema is invalid !');
       console.warn(ajv.errors);
